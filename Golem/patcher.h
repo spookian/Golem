@@ -14,15 +14,18 @@ UINT32 golemBranchPatch(UINT32 instr);
 //dol functions
 UINT32 golemGrabStart(void* dol);
 
+UINT32 reverseInt(UINT32 org);
+
 //variables
 void* baseFile;
 void* patchFile;
 
-UINT32 textSect;
 //The current address in the patch dol being read by Golem.
 UINT32 currentPatchAddr;
 //The current address in main.dol being written to by Golem.
 UINT32 currentPasteAddr;
 UINT32 baseSize;
+UINT32 patchSize;
+UINT32 newSize;
 
 UCHAR error_flag;

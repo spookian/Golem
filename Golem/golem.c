@@ -12,7 +12,6 @@
 
 HANDLE output;
 char* filePath = NULL;	//			;; a path to the elf/dol file that will 
-char* optFilePath = NULL;
 
 errno_t arg_decide(int length, char* str);
 errno_t singl_decide(char letter);
@@ -23,6 +22,8 @@ int main(int argc, char** argv)
 	BOOL scnd_arg = FALSE;
 	output = GetStdHandle(STD_OUTPUT_HANDLE);
 	HANDLE fileH = CreateFileA("main.dol", GENERIC_READ | GENERIC_WRITE, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	HANDLE sFileH;
+
 	if (fileH == INVALID_HANDLE_VALUE)
 	{
 		WriteConsoleA(output, "ERROR: Return to Dreamland's main.dol not found!\n", 50, NULL, NULL);
@@ -47,22 +48,33 @@ int main(int argc, char** argv)
 			return 0;
 		}
 	}
-	WriteConsoleA(output, filePath, strlen(filePath), NULL, NULL);
-	WriteConsoleA(output, "\n", 1, NULL, NULL);
+
+	sFileH = CreateFileA(filePath, GENERIC_READ | GENERIC_WRITE, NULL, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+	if (!sFileH)
+	{
+		return 0;
+	}
+	baseSize = GetFileSize(fileH, NULL);
+	patchSize = GetFileSize(sFileH, NULL);
+
+	baseFile = malloc(baseSize);
+	patchFile = malloc(patchSize);
 	
-	//testing something
-	currentPatchAddr = 0x80000000;
-	currentPasteAddr = 0x801FC754;
+	if (!ReadFile(fileH, baseFile, baseSize, NULL, NULL) || !ReadFile(sFileH, patchFile, patchSize, NULL, NULL))
+	{
+		WriteConsoleA(output, "Error: Failure to read files!\n", 15, NULL, NULL);
+		return 0;
+	}
+	CloseHandle(fileH);
+	CloseHandle(sFileH);
 
-	char buffer[10];
-	_itoa_s(golemBranchPatch(0x48017964), buffer, 10, 16); //offset is 17964
-	WriteConsoleA(output, buffer, 8, NULL, NULL);
+	golemFileCopy();
+	HANDLE newFile = CreateFileA("main_new.dol", GENERIC_WRITE | GENERIC_READ, NULL, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+	WriteFile(newFile, baseFile, newSize, NULL, NULL);
 
-	//load files into memory
-	//manually copy each byte in text section
-	//
-
-
+	CloseHandle(newFile);
+	free(baseFile);
+	free(patchFile);
 	return 0;
 }
 
