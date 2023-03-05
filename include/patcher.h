@@ -1,6 +1,7 @@
 #ifndef GOL_PATCHER_H
 
 #define FILE_LOAD_FAIL 0x80
+#define END_RTDLMEM 0x808D120C // magic number that's the end of rtdl's used memory
 
 typedef unsigned char uint8_t;
 typedef unsigned int uint32_t;

@@ -27,7 +27,8 @@ uint32_t golemBranchPatch(uint32_t instr)
 	if (currentPasteAddr > branchAddr)
 	{
 		newOffset = 0xFFFFFFFF - (currentPasteAddr - branchAddr) + 1;
-		newOffset = (newOffset - 0xFC000000); //the reverse branch offset - 0xFC000000 + the base instruction
+		newOffset = (newOffset - 0xFC000000); 
+		//the reverse branch offset - 0xFC000000 + the base instruction
 		//cpaste = 801ffffc
 		//branch = 80045048
 	}
@@ -53,13 +54,24 @@ void golemFileCopy()
 	
 	//Setup phase
 	uint32_t patchText = reverseInt(*(uint32_t*)patchFile);
+	//first offset of main.dol is the offset to text0
+
+	uint32_t patchDataSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0xAC));
+	uint32_t patchDataOffset = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x1C))
 	uint32_t patchSectSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x90));
+
 	uint32_t *patchPointer = (uint32_t*)((uint8_t*)patchFile + patchText);
-	newSize = baseSize + patchSectSize;
+	newSize = baseSize + patchSectSize + patchDataSize;
 
 	baseFile = realloc(baseFile, newSize); //resizes main.dol in memory
 	currentPatchAddr = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0xE0));
-	currentPasteAddr = 0x808D11C0;
+	//im gonna be honest i have no idea how it works
+	//it only works cause god's grace decreed that the entry should be the first function
+	currentPasteAddr = END_RTDLMEM + patchDataSize; 
+
+	memcpy(baseFile + baseSize, patchFile + patchDataOffset, patchDataSize);
+	*(uint32_t*)((uint32_t)baseFile + 0x3C) = reverseInt(baseSize); 
+	// data8
 
 	//Loop phase
 	if (baseFile)
@@ -83,7 +95,10 @@ void golemFileCopy()
 		//Ending phase
 		*(uint32_t*)((uint8_t*)baseFile + 0x8) = reverseInt(baseSize);
 		*(uint32_t*)((uint8_t*)baseFile + 0x98) = reverseInt(patchSectSize);
-		*(uint32_t*)((uint8_t*)baseFile + 0x50) = reverseInt(0x808D11C0);
+		*(uint32_t*)((uint8_t*)baseFile + 0x50) = reverseInt(END_RTDLMEM + patchDataSize); 
+		*(uint32_t*)((uint8_t*)baseFile + 0xCC) = reverseInt(patchDataSize);
+		*(uint32_t*)((uint8_t*)baseFile + 0x84) = reverseInt(END_RTDLMEM);
+		// rtdl only uses up to text1, so the new text section takes up text2 in baseFile + 0x50 instead
 	}
 	else
 	{
