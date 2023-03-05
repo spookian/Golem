@@ -1,0 +1,3 @@
+/home/ianbow/Golem/build/CMakeFiles/Golem.dir
+/home/ianbow/Golem/build/CMakeFiles/edit_cache.dir
+/home/ianbow/Golem/build/CMakeFiles/rebuild_cache.dir
