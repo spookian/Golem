@@ -8,6 +8,7 @@ If you wish to use it however, you must place a copy of RtDL's main.dol in the s
 
 Next, the argument must be set to another dol file, the one whose code (must be in the first text section) and data you want to inject into RtDL.
 The program will then spit out a new dol file to be used for RtDL (you must change it to main.dol). 
+
 Finalize the romhack by hooking into whatever function you want to reroute into your new function, either via editing the binary or via a Gecko code.
 
 ## Warning
