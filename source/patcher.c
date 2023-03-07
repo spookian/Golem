@@ -57,7 +57,7 @@ void golemFileCopy()
 	//first offset of main.dol is the offset to text0
 
 	uint32_t patchDataSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0xAC));
-	uint32_t patchDataOffset = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x1C))
+	uint32_t patchDataOffset = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x1C));
 	uint32_t patchSectSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x90));
 
 	uint32_t *patchPointer = (uint32_t*)((uint8_t*)patchFile + patchText);
