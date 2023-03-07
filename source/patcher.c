@@ -76,7 +76,7 @@ void golemFileCopy()
 	//Loop phase
 	if (baseFile)
 	{
-		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize);
+		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize + patchDataSize);
 		for (int i = 0; i < (patchSectSize / 4); i++)
 		{
 			int instr = reverseInt(*patchPointer);
