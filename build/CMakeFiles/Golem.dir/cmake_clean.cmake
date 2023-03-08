@@ -1,10 +1,12 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/Golem.dir/golem.c.o"
-  "CMakeFiles/Golem.dir/golem.c.o.d"
-  "CMakeFiles/Golem.dir/patcher.c.o"
-  "CMakeFiles/Golem.dir/patcher.c.o.d"
-  "Golem"
+  "CMakeFiles/Golem.dir/golem.c.obj"
+  "CMakeFiles/Golem.dir/golem.c.obj.d"
+  "CMakeFiles/Golem.dir/patcher.c.obj"
+  "CMakeFiles/Golem.dir/patcher.c.obj.d"
+  "Golem.exe"
+  "Golem.exe.manifest"
   "Golem.pdb"
+  "libGolem.dll.a"
 )
 
 # Per-language clean rules from dependency scanning.

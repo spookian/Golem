@@ -11,8 +11,6 @@ typedef char bool;
 #define GOLEM_INC 1
 #define GOLEM_ERR 2
 
-
-
 #ifdef __linux__
 #include <unistd.h>
 #include <fcntl.h>

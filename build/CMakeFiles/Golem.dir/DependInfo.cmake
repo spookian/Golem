@@ -8,12 +8,12 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/ianbow/Golem/source/golem.c" "CMakeFiles/Golem.dir/golem.c.o" "gcc" "CMakeFiles/Golem.dir/golem.c.o.d"
-  "/home/ianbow/Golem/source/patcher.c" "CMakeFiles/Golem.dir/patcher.c.o" "gcc" "CMakeFiles/Golem.dir/patcher.c.o.d"
+  "E:/golem-git/Golem/source/golem.c" "CMakeFiles/Golem.dir/golem.c.obj" "gcc" "CMakeFiles/Golem.dir/golem.c.obj.d"
+  "E:/golem-git/Golem/source/patcher.c" "CMakeFiles/Golem.dir/patcher.c.obj" "gcc" "CMakeFiles/Golem.dir/patcher.c.obj.d"
   )
 
-# Targets to which this target links.
-set(CMAKE_TARGET_LINKED_INFO_FILES
+# Targets to which this target links which contain Fortran sources.
+set(CMAKE_Fortran_TARGET_LINKED_INFO_FILES
   )
 
 # Fortran module output directory.

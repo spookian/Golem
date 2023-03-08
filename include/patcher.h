@@ -1,3 +1,7 @@
+#include <string.h> // for malloc
+#include <stdio.h> // for printf
+#include <stdlib.h>
+
 #ifndef GOL_PATCHER_H
 
 #define FILE_LOAD_FAIL 0x80
@@ -9,10 +13,6 @@ typedef unsigned int uint32_t;
 //function for copying the new code over
 void golemFileCopy();
 //Returns whether or not the given instruction is a branch statement.
-uint32_t golemBranchCheck(uint32_t instr);
-//Returns a patched branch instruction after being given the original instruction.
-uint32_t golemBranchPatch(uint32_t instr);
-
 //dol functions
 uint32_t golemGrabStart(void* dol);
 uint32_t reverseInt(uint32_t org);

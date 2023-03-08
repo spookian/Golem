@@ -12,34 +12,6 @@ uint32_t newSize;
 
 uint8_t error_flag;
 
-uint32_t golemBranchCheck(uint32_t instr)
-{
-	uint8_t f_byte = (instr >> 24);
-	return ((f_byte >= 0x40) & (f_byte <= 0x4B));
-}
-
-uint32_t golemBranchPatch(uint32_t instr)
-{
-	uint32_t branchAddr = currentPatchAddr + ((instr << 6) >> 6);
-	branchAddr &= 0xFFFFFFFC;
-
-	uint32_t newOffset = 0, newInstr = 0;
-	if (currentPasteAddr > branchAddr)
-	{
-		newOffset = 0xFFFFFFFF - (currentPasteAddr - branchAddr) + 1;
-		newOffset = (newOffset - 0xFC000000); 
-		//the reverse branch offset - 0xFC000000 + the base instruction
-		//cpaste = 801ffffc
-		//branch = 80045048
-	}
-	else
-	{
-		newOffset = branchAddr - currentPasteAddr;
-	}
-	newInstr = newOffset + 0x48000000 + (instr & 0x3);
-	return newInstr;
-}
-
 uint32_t golemGrabStart(void* dol)
 {
 	return *(uint32_t*)((uint8_t*)dol + 0x1c);
@@ -64,26 +36,28 @@ void golemFileCopy()
 	newSize = baseSize + patchSectSize + patchDataSize;
 
 	baseFile = realloc(baseFile, newSize); //resizes main.dol in memory
-	currentPatchAddr = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0xE0));
+	currentPatchAddr = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x48));
 	//im gonna be honest i have no idea how it works
 	//it only works cause god's grace decreed that the entry should be the first function
 	currentPasteAddr = END_RTDLMEM + patchDataSize; 
 
-	memcpy(baseFile + baseSize, patchFile + patchDataOffset, patchDataSize);
-	*(uint32_t*)((uint32_t)baseFile + 0x3C) = reverseInt(baseSize); 
 	// data8
 
 	//Loop phase
 	if (baseFile)
 	{
+		memcpy(baseFile + baseSize, patchFile + patchDataOffset, patchDataSize);
+		*(uint32_t*)((uint32_t)baseFile + 0x3C) = reverseInt(baseSize); 
 		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize + patchDataSize);
 		for (int i = 0; i < (patchSectSize / 4); i++)
 		{
 			int instr = reverseInt(*patchPointer);
-			if (golemBranchCheck(instr))
+			/*if (golemBranchCheck(instr))
 			{
-				*patchPointer = reverseInt(golemBranchPatch(instr));
-			}
+				//*patchPointer = reverseInt(golemBranchPatch(instr));
+				printf("%x\n", *patchPointer);
+			}*/
+			// this function is way too problematic and it doesn't even fulfill it's intended purpose
 			*basePointer = *patchPointer;
 
 			patchPointer++;
