@@ -1,3 +1,0 @@
-E:/golem-git/Golem/build/CMakeFiles/Golem.dir
-E:/golem-git/Golem/build/CMakeFiles/edit_cache.dir
-E:/golem-git/Golem/build/CMakeFiles/rebuild_cache.dir
