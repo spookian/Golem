@@ -1,0 +1,9 @@
+todo.txt
+wip.txt
+CMakeCache.txt
+*.exe
+*.dol
+Makefile
+cmake_install.cmake
+CMakeFiles/
+build/CMakeFiles/

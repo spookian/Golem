@@ -27,37 +27,24 @@ void golemFileCopy()
 	//Setup phase
 	uint32_t patchText = reverseInt(*(uint32_t*)patchFile);
 	//first offset of main.dol is the offset to text0
-
-	uint32_t patchDataSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0xAC));
-	uint32_t patchDataOffset = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x1C));
 	uint32_t patchSectSize = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x90));
 
 	uint32_t *patchPointer = (uint32_t*)((uint8_t*)patchFile + patchText);
-	newSize = baseSize + patchSectSize + patchDataSize;
+	newSize = baseSize + patchSectSize;
 
 	baseFile = realloc(baseFile, newSize); //resizes main.dol in memory
 	currentPatchAddr = reverseInt(*(uint32_t*)((uint8_t*)patchFile + 0x48));
 	//im gonna be honest i have no idea how it works
 	//it only works cause god's grace decreed that the entry should be the first function
-	currentPasteAddr = END_RTDLMEM + patchDataSize; 
-
-	// data8
+	currentPasteAddr = END_RTDLMEM;
 
 	//Loop phase
 	if (baseFile)
 	{
-		memcpy(baseFile + baseSize, patchFile + patchDataOffset, patchDataSize);
-		*(uint32_t*)((uint32_t)baseFile + 0x3C) = reverseInt(baseSize); 
-		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize + patchDataSize);
+		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize);
 		for (int i = 0; i < (patchSectSize / 4); i++)
 		{
 			int instr = reverseInt(*patchPointer);
-			/*if (golemBranchCheck(instr))
-			{
-				//*patchPointer = reverseInt(golemBranchPatch(instr));
-				printf("%x\n", *patchPointer);
-			}*/
-			// this function is way too problematic and it doesn't even fulfill it's intended purpose
 			*basePointer = *patchPointer;
 
 			patchPointer++;
@@ -69,9 +56,7 @@ void golemFileCopy()
 		//Ending phase
 		*(uint32_t*)((uint8_t*)baseFile + 0x8) = reverseInt(baseSize);
 		*(uint32_t*)((uint8_t*)baseFile + 0x98) = reverseInt(patchSectSize);
-		*(uint32_t*)((uint8_t*)baseFile + 0x50) = reverseInt(END_RTDLMEM + patchDataSize); 
-		*(uint32_t*)((uint8_t*)baseFile + 0xCC) = reverseInt(patchDataSize);
-		*(uint32_t*)((uint8_t*)baseFile + 0x84) = reverseInt(END_RTDLMEM);
+		*(uint32_t*)((uint8_t*)baseFile + 0x50) = reverseInt(END_RTDLMEM);
 		// rtdl only uses up to text1, so the new text section takes up text2 in baseFile + 0x50 instead
 	}
 	else
