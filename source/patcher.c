@@ -54,9 +54,10 @@ void golemFileCopy()
 		}
 
 		//Ending phase
-		*(uint32_t*)((uint8_t*)baseFile + 0x8) = reverseInt(baseSize);
-		*(uint32_t*)((uint8_t*)baseFile + 0x98) = reverseInt(patchSectSize);
-		*(uint32_t*)((uint8_t*)baseFile + 0x50) = reverseInt(END_RTDLMEM);
+		*(uint32_t*)((uint32_t)baseFile + 0x8) 	= reverseInt(baseSize);
+		*(uint32_t*)((uint32_t)baseFile + 0x98) = reverseInt(patchSectSize);
+		*(uint32_t*)((uint32_t)baseFile + 0x50) = reverseInt(END_RTDLMEM);
+		*(uint32_t*)((uint32_t)baseFile + 0xE0) = *(uint32_t*)((uint32_t)patchFile + 0xE0);
 		// rtdl only uses up to text1, so the new text section takes up text2 in baseFile + 0x50 instead
 	}
 	else
