@@ -12,13 +12,6 @@ uint32_t newSize;
 
 uint8_t error_flag;
 
-uint32_t golemGrabStart(void* dol)
-{
-	return *(uint32_t*)((uint8_t*)dol + 0x1c);
-	//lesser men would die from this pointer magic;
-	//but i was raised in it
-}
-
 //keep in mind that this function assumes you've already loaded the two files into memory
 //and also assumes all of your code is stored in text0
 void golemFileCopy() 
@@ -42,28 +35,21 @@ void golemFileCopy()
 	if (baseFile)
 	{
 		uint32_t* basePointer = (uint32_t*)((uint8_t*)baseFile + baseSize);
-		for (int i = 0; i < (patchSectSize / 4); i++)
-		{
-			int instr = reverseInt(*patchPointer);
-			*basePointer = *patchPointer;
-
-			patchPointer++;
-			basePointer++;
-			currentPatchAddr += 4;
-			currentPasteAddr += 4;
-		}
-
+		memcpy(basePointer, patchPointer, patchSectSize);
 		//Ending phase
-		*(uint32_t*)((uint32_t)baseFile + 0x8) 	= reverseInt(baseSize);
-		*(uint32_t*)((uint32_t)baseFile + 0x98) = reverseInt(patchSectSize);
-		*(uint32_t*)((uint32_t)baseFile + 0x50) = reverseInt(END_RTDLMEM);
-		*(uint32_t*)((uint32_t)baseFile + 0xE0) = *(uint32_t*)((uint32_t)patchFile + 0xE0);
+		((uint32_t*)baseFile)[2] = reverseInt(baseSize);
+		((uint32_t*)baseFile)[0x26] = reverseInt(patchSectSize);
+		printf("Copy complete!\n");
+		((uint32_t*)baseFile)[0x14] = reverseInt(END_RTDLMEM);
+		((uint32_t*)baseFile)[0x38]= ((uint32_t*)patchFile)[0x38];
 		// rtdl only uses up to text1, so the new text section takes up text2 in baseFile + 0x50 instead
 	}
 	else
 	{
 		error_flag |= FILE_LOAD_FAIL;
 	}
+	printf("Copy complete!\n");
+	return;
 }
 
 uint32_t reverseInt(uint32_t org)

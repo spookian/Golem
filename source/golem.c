@@ -9,15 +9,6 @@
 * golem -h					;; golem prints out a list of how-tos
 */
 
-#ifdef __linux__
-int linux_file_size(void* handle)
-{
-	struct stat d;
-	fstat(handle, &d);
-	return d.st_size;
-}
-#endif
-
 char* filePath = NULL;	//			;; a path to the elf/dol file that will 
 
 int arg_decide(int length, char* str);
@@ -27,10 +18,10 @@ int singl_decide(char letter);
 int main(int argc, char** argv)
 {
 	bool scnd_arg = FALSE;
-	void* fileH = GOLEM_FILE_OPEN("main.dol");
+	void* fileH = fopen("main.dol", "rw");
 	void* sFileH;
 
-	if (fileH == -1)
+	if (fileH == NULL)
 	{
 		printf("ERROR: Return to Dreamland's main.dol not found!\n");
 		return 0;
@@ -55,32 +46,43 @@ int main(int argc, char** argv)
 		}
 	}
 
-	sFileH = GOLEM_FILE_OPEN(filePath);
-	if (sFileH == -1)
+	sFileH = fopen(filePath, "rw");
+	if (sFileH == NULL)
 	{
-
 		return 0;
 	}
-	baseSize = GOLEM_FILE_SIZE(fileH);
-	patchSize = GOLEM_FILE_SIZE(sFileH);
+
+	fseek(fileH, 0, SEEK_END);
+	fseek(sFileH, 0, SEEK_END);
+
+	baseSize = ftell(fileH);
+	patchSize = ftell(sFileH);
+	printf("%d", baseSize);
+
+	rewind(fileH);
+	rewind(sFileH);
 
 	baseFile = malloc(baseSize);
 	patchFile = malloc(patchSize);
 	
-	if (!GOLEM_FILE_LOAD(fileH, baseSize, baseFile) || !GOLEM_FILE_LOAD(sFileH, patchSize, patchFile))
+	if ((fread(baseFile, baseSize, 1, fileH) == 0) || (fread(patchFile, patchSize, 1, sFileH) == 0))
 	{
 		printf("Error: Failure to read files!\n");
 		return 0;
 	}
-	GOLEM_FILE_CLOSE(fileH);
-	GOLEM_FILE_CLOSE(sFileH);
-
+	fclose(fileH);
+	fclose(sFileH);
+	printf("Beginning second phase...\n");
 	golemFileCopy();
-	void* newFile = GOLEM_FILE_CREATE("main_new.dol");
-	
-	GOLEM_FILE_WRITE(newFile, baseFile, newSize);
+	void* newFile = fopen("main_new.dol", "w");
+	printf("Beginning final phase...\n");
+	if (fwrite(baseFile, newSize, 1, newFile) == 0)
+	{
+		printf("Error: Failure to write files! \n");
+		return 0;
+	}
 
-	GOLEM_FILE_CLOSE(newFile);
+	fclose(newFile);
 	free(baseFile);
 	free(patchFile);
 	return 0;
